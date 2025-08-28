@@ -93,19 +93,23 @@ def index():
     message = ""
     if request.method == "POST":
         rtsp_url = request.form["rtsp_url"]
-        rtmp_url = f"rtmp://{SERVER_IP}/live/{DEFAULT_STREAM_NAME}"
-        
+        rtsp_push_url = f"rtsp://{SERVER_IP}/live/{DEFAULT_STREAM_NAME}"
+
+       
+
         cmd = [
-            "ffmpeg",
-            "-rtsp_transport", "tcp",
-            "-i", rtsp_url,
-            "-c:v", "copy",
-            "-c:a", "aac",
-            "-f", "flv",
-            rtmp_url
-        ]
+    "ffmpeg",
+    "-rtsp_transport", "tcp",
+    "-i", rtsp_url,
+    "-c:v", "copy",
+    "-c:a", "aac",
+    "-f", "rtsp",   # send as RTSP
+    rtsp_push_url
+]
+
+
         subprocess.Popen(cmd)
-        message = f"Streaming started to {rtmp_url}"
+        message = f"Streaming started to {rtsp_push_url}"
     return render_template_string(HTML, message=message)
 
 if __name__ == "__main__":
